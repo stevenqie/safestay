@@ -1,0 +1,70 @@
+name: Check
+on:
+  push:
+    branches:
+      - "**"
+      - "!main"
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    name: Format Check
+    strategy:
+      matrix:
+        project: [client, server]
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: "npm"
+          cache-dependency-path: ./${{ matrix.project }}/package-lock.json
+      - name: Install dependencies for ${{ matrix.project }}
+        working-directory: ./${{ matrix.project }}
+        run: npm install
+      - name: Check formatting for ${{ matrix.project }}
+        working-directory: ./${{ matrix.project }}
+        run: npm run format:check
+  lint:
+    runs-on: ubuntu-latest
+    name: Lint Check
+    strategy:
+      matrix:
+        project: [client, server]
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: "npm"
+          cache-dependency-path: ./${{ matrix.project }}/package-lock.json
+      - name: Install dependencies for ${{ matrix.project }}
+        working-directory: ./${{ matrix.project }}
+        run: npm install
+      - name: Run linter for ${{ matrix.project }}
+        working-directory: ./${{ matrix.project }}
+        run: npm run lint
+  build:
+    runs-on: ubuntu-latest
+    name: Build
+    strategy:
+      matrix:
+        project: [client]
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: "npm"
+          cache-dependency-path: ./${{ matrix.project }}/package-lock.json
+      - name: Install dependencies for ${{ matrix.project }}
+        working-directory: ./${{ matrix.project }}
+        run: npm install
+      - name: Run build for ${{ matrix.project }}
+        working-directory: ./${{ matrix.project }}
+        run: npm run build
